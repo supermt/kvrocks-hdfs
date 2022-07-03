@@ -25,9 +25,9 @@ endif()
 
 include(cmake/utils.cmake)
 
-FetchContent_DeclareGitHubWithMirrorR(rocksdb
-  asu-idi/rocksdb-private.git
-  origin/remote_compaction
+FetchContent_DeclareGitHubWithMirror(rocksdb
+  facebook/rocksdb v6.29.5
+  MD5=b7efb227f10a668adcb914c973f19648
 )
 
 FetchContent_GetProperties(jemalloc)

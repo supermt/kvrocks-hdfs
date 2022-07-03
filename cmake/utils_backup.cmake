@@ -57,17 +57,3 @@ function(FetchContent_DeclareGitHubWithMirror dep repo tag hash)
     ${hash}
   )
 endfunction()
-
-function(FetchContent_DeclareWithMirrorR dep url tag)
-  FetchContent_Declare(${dep}
-    GIT_REPOSITORY ${DEPS_FETCH_PROXY}${url}
-    GIT_TAG ${tag}
-  )
-endfunction()
-
-function(FetchContent_DeclareGitHubWithMirrorR dep repo tag)
-  FetchContent_DeclareWithMirrorR(${dep}
-    https://github.com/${repo}
-    ${tag}
-  )
-endfunction()
