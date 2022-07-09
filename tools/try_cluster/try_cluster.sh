@@ -18,7 +18,7 @@
 # under the License.
 
 # Settings
-BIN_PATH="../../src/"
+BIN_PATH="../../build/"
 HOST=127.0.0.1
 PORT=30000
 NODES=6
