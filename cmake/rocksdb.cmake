@@ -20,33 +20,33 @@ include_guard()
 set(COMPILE_WITH_JEMALLOC ON)
 
 if (DISABLE_JEMALLOC)
-  set(COMPILE_WITH_JEMALLOC OFF)
-endif()
+    set(COMPILE_WITH_JEMALLOC OFF)
+endif ()
 
 include(cmake/utils.cmake)
 
 FetchContent_DeclareGitHubWithMirrorR(rocksdb
-  asu-idi/rocksdb-private.git
-  origin/remote_compaction
-)
+        facebook/rocksdb.git
+        v7.3.1
+        )
 
 FetchContent_GetProperties(jemalloc)
 FetchContent_GetProperties(snappy)
 
 FetchContent_MakeAvailableWithArgs(rocksdb
-  CMAKE_MODULE_PATH=${PROJECT_SOURCE_DIR}/cmake/modules # to locate FindJeMalloc.cmake
-  Snappy_DIR=${PROJECT_SOURCE_DIR}/cmake/modules # to locate SnappyConfig.cmake
-  FAIL_ON_WARNINGS=OFF
-  WITH_TESTS=OFF
-  WITH_BENCHMARK_TOOLS=OFF
-  WITH_SNAPPY=ON
-  WITH_LZ4=ON
-  WITH_TOOLS=OFF
-  WITH_GFLAGS=OFF
-  USE_RTTI=ON
-  ROCKSDB_BUILD_SHARED=OFF
-  WITH_JEMALLOC=${COMPILE_WITH_JEMALLOC}
-)
+        CMAKE_MODULE_PATH=${PROJECT_SOURCE_DIR}/cmake/modules # to locate FindJeMalloc.cmake
+        Snappy_DIR=${PROJECT_SOURCE_DIR}/cmake/modules # to locate SnappyConfig.cmake
+        FAIL_ON_WARNINGS=OFF
+        WITH_TESTS=OFF
+        WITH_BENCHMARK_TOOLS=OFF
+        WITH_SNAPPY=ON
+        WITH_LZ4=ON
+        WITH_TOOLS=OFF
+        WITH_GFLAGS=OFF
+        USE_RTTI=ON
+        ROCKSDB_BUILD_SHARED=OFF
+        WITH_JEMALLOC=${COMPILE_WITH_JEMALLOC}
+        )
 
 add_library(rocksdb_with_headers INTERFACE)
 target_include_directories(rocksdb_with_headers INTERFACE ${rocksdb_SOURCE_DIR}/include)
