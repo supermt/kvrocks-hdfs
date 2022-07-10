@@ -51,3 +51,12 @@ redis-cli -h 127.0.0.1 -p 30004 clusterx setslot 0 NODE kvrockskvrockskvrockskvr
 redis-cli -h 127.0.0.1 -p 30005 clusterx setslot 0 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2
 redis-cli -h 127.0.0.1 -p 30006 clusterx setslot 0 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2
 ```
+
+## Use YCSB to do the benchmark
+
+Under the dir `ycsbcore` is the source code of YCSB workload generator
+
+We also check out the newest version (July 3rd 2022) of redis-plus-plus as the request client
+
+Also, you can use the java version in `ycsb` dir, which is the original version of YCSB.
+
