@@ -21,6 +21,7 @@ namespace ycsbc {
   class RedisDB : public DB {
   public:
     RedisDB(const char *host, int start_port = 30001, int repeat_time = 6) {
+     std::cout << "start connection" << std::endl;
 
      std::vector <redis::connection_data> redis_server;
 //     int start_port = 30000;

@@ -79,7 +79,7 @@ int main(const int argc, const char *argv[]) {
  timer.Start();
  for (int i = 0; i < num_threads; ++i) {
   actual_ops.emplace_back(async(launch::async,
-                                DelegateClient, db, &wl, total_ops / num_threads, false));
+                                DelegateClient, db, &wl, total_ops / num_threads, true));
  }
  assert((int) actual_ops.size() == num_threads);
 
@@ -130,13 +130,13 @@ string ParseCommandLine(int argc, const char *argv[], utils::Properties &props) 
    }
    props.SetProperty("port", argv[argindex]);
    argindex++;
-  } else if (strcmp(argv[argindex], "-slaves") == 0) {
+  } else if (strcmp(argv[argindex], "-nodes") == 0) {
    argindex++;
    if (argindex >= argc) {
     UsageMessage(argv[0]);
     exit(0);
    }
-   props.SetProperty("slaves", argv[argindex]);
+   props.SetProperty("nodes", argv[argindex]);
    argindex++;
   } else if (strcmp(argv[argindex], "-P") == 0) {
    argindex++;

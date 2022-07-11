@@ -60,3 +60,8 @@ We also check out the newest version (July 3rd 2022) of redis-plus-plus as the r
 
 Also, you can use the java version in `ycsb` dir, which is the original version of YCSB.
 
+```shell
+cd YCSB-C/
+make -j4
+./ycsb-redis -db redis -threads 1 -P workloads/workloada.spec -host 127.0.0.1 -port 30001 -nodes 6
+```
