@@ -34,9 +34,10 @@ namespace ycsbc {
      }
 
 
-     boost::shared_ptr <redis::client> cluster(
-         new redis::client(redis_server.begin(), redis_server.end())
-     );
+//     boost::shared_ptr <redis::client> cluster(
+//         new redis::client(redis_server.begin(), redis_server.end())
+//     );
+     shared_c.reset(new redis::client(redis_server.begin(), redis_server.end()));
 //     shared_c.reset(cluster);
     }
 
