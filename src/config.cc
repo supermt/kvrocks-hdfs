@@ -405,15 +405,6 @@ void Config::initFieldCallback() {
        if (cluster_enabled) srv->slot_migrate_->SetSequenceGapSize(sequence_gap);
        return Status::OK();
      }},
-//     {"rocksdb.env-uri",                              [this](Server *srv, const std::string &k,
-//                                                             const std::string &v) -> Status {
-//       std::cout << "HDFS dir" << std::endl;
-//       this->hdfs_uri = k;
-//       if (!srv) return Status::OK();
-//       return srv->storage_->SetColumnFamilyOption(trimRocksDBPrefix(k),
-//                                                   std::to_string(RocksDB.target_file_size_base * MiB));
-//     }
-// },
      {
       "rocksdb.target_file_size_base",                [this](Server *srv, const std::string &k,
                                                              const std::string &v) -> Status {
@@ -627,7 +618,7 @@ Status Config::finish() {
  if (pidfile.empty()) pidfile = dir + "/kvrocks.pid";
  std::vector <std::string> createDirs = {dir};
  for (const auto &name: createDirs) {
-  s = env_->CreateDirIfMissing(name);
+  auto s = env_->CreateDirIfMissing(name);
 //  auto s = rocksdb::Env::Default()->CreateDirIfMissing(name);
   if (!s.ok()) return Status(Status::NotOK, s.ToString());
  }
