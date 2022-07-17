@@ -53,7 +53,7 @@ if [ -z "$BUILD_DIR" ]; then
 fi
 
 if [ -z "$JOB_CMD" ]; then
-    JOB_CMD="-j4"
+    JOB_CMD="-j 4"
 fi
 
 WORKING_DIR=$(pwd)
