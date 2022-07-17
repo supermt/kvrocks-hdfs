@@ -26,8 +26,8 @@ endif ()
 include(cmake/utils.cmake)
 
 FetchContent_DeclareGitHubWithMirrorR(rocksdb
-        facebook/rocksdb.git
-        v7.3.1
+        supermt/RocksDB-for-HDFS.git
+        main
         )
 
 FetchContent_GetProperties(jemalloc)
