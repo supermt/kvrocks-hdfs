@@ -19,6 +19,7 @@
  */
 
 #pragma once
+
 #include <sys/resource.h>
 
 #include <map>
@@ -36,7 +37,7 @@
 // forward declaration
 class Server;
 namespace Engine {
-class Storage;
+  class Storage;
 }
 
 #define SUPERVISED_NONE 0
@@ -51,19 +52,21 @@ const size_t GiB = 1024L * MiB;
 extern const char *kDefaultNamespace;
 
 struct CompactionCheckerRange {
- public:
+public:
   int Start;
   int Stop;
 
   bool Enabled() {
-    return Start != -1 || Stop != -1;
+   return Start != -1 || Stop != -1;
   }
 };
 
-struct Config{
- public:
+struct Config {
+public:
   Config();
+
   ~Config() = default;
+
   int port = 6666;
   int workers = 0;
   int timeout = 0;
@@ -89,9 +92,10 @@ struct Config{
   bool auto_resize_block_and_sst = true;
   int fullsync_recv_file_delay = 0;
   bool use_rsid_psync = false;
-  std::vector<std::string> binds;
+  std::vector <std::string> binds;
   std::string dir;
   std::string db_dir;
+  std::string hdfs_uri;
   std::string backup_dir;
   std::string backup_sync_dir;
   std::string checkpoint_dir;
@@ -108,7 +112,7 @@ struct Config{
   Cron compact_cron;
   Cron bgsave_cron;
   CompactionCheckerRange compaction_checker_range{-1, -1};
-  std::map<std::string, std::string> tokens;
+  std::map <std::string, std::string> tokens;
 
   bool slot_id_encoded = false;
   bool cluster_enabled = false;
@@ -120,8 +124,12 @@ struct Config{
   int profiling_sample_ratio = 0;
   int profiling_sample_record_threshold_ms = 0;
   int profiling_sample_record_max_len = 128;
-  std::set<std::string> profiling_sample_commands;
+  std::set <std::string> profiling_sample_commands;
   bool profiling_sample_all_commands = false;
+
+  //rocksdb environment
+  rocksdb::Env *env_ = rocksdb::Env::Default();
+  std::shared_ptr <rocksdb::Env> env_guard;
 
   struct {
     int block_size;
@@ -159,19 +167,28 @@ struct Config{
     bool level_compaction_dynamic_level_bytes;
   } RocksDB;
 
- public:
+public:
   Status Rewrite();
+
   Status Load(const std::string &path);
-  void Get(std::string key, std::vector<std::string> *values);
+
+  void Get(std::string key, std::vector <std::string> *values);
+
   Status Set(Server *svr, std::string key, const std::string &value);
+
   void SetMaster(const std::string &host, int port);
+
   void ClearMaster();
+
   Status GetNamespace(const std::string &ns, std::string *token);
+
   Status AddNamespace(const std::string &ns, const std::string &token);
+
   Status SetNamespace(const std::string &ns, const std::string &token);
+
   Status DelNamespace(const std::string &ns);
 
- private:
+private:
   std::string path_;
   std::string binds_;
   std::string slaveof_;
@@ -179,12 +196,16 @@ struct Config{
   std::string bgsave_cron_;
   std::string compaction_checker_range_;
   std::string profiling_sample_commands_;
-  std::map<std::string, std::unique_ptr<ConfigField>> fields_;
+  std::map <std::string, std::unique_ptr<ConfigField>> fields_;
   std::string rename_command_;
 
   void initFieldValidator();
+
   void initFieldCallback();
+
   Status parseConfigFromString(std::string input, int line_number);
+
   Status finish();
+
   Status isNamespaceLegal(const std::string &ns);
 };
