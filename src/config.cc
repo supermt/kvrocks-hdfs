@@ -87,7 +87,7 @@ Config::Config() {
  struct FieldWrapper {
    std::string name;
    bool readonly;
-   std::unique_ptr <ConfigField> field;
+   std::unique_ptr<ConfigField> field;
 
    FieldWrapper(std::string name, bool readonly,
                 ConfigField *field)
@@ -213,7 +213,7 @@ Config::Config() {
 // The validate function would be invoked before the field was set,
 // to make sure that new value is valid.
 void Config::initFieldValidator() {
- std::map <std::string, validate_fn> validators = {
+ std::map<std::string, validate_fn> validators = {
      {"requirepass",              [this](const std::string &k, const std::string &v) -> Status {
        if (v.empty() && !tokens.empty()) {
         return Status(Status::NotOK, "requirepass empty not allowed while the namespace exists");
@@ -230,11 +230,11 @@ void Config::initFieldValidator() {
        return Status::OK();
      }},
      {"compact-cron",             [this](const std::string &k, const std::string &v) -> Status {
-       std::vector <std::string> args = Util::Split(v, " \t");
+       std::vector<std::string> args = Util::Split(v, " \t");
        return compact_cron.SetScheduleTime(args);
      }},
      {"bgsave-cron",              [this](const std::string &k, const std::string &v) -> Status {
-       std::vector <std::string> args = Util::Split(v, " \t");
+       std::vector<std::string> args = Util::Split(v, " \t");
        return bgsave_cron.SetScheduleTime(args);
      }},
      {"compaction-checker-range", [this](const std::string &k, const std::string &v) -> Status {
@@ -243,7 +243,7 @@ void Config::initFieldValidator() {
         compaction_checker_range.Stop = -1;
         return Status::OK();
        }
-       std::vector <std::string> args = Util::Split(v, "-");
+       std::vector<std::string> args = Util::Split(v, "-");
        if (args.size() != 2) {
         return Status(Status::NotOK, "invalid range format, the range should be between 0 and 24");
        }
@@ -258,7 +258,7 @@ void Config::initFieldValidator() {
        return Status::OK();
      }},
      {"rename-command",           [](const std::string &k, const std::string &v) -> Status {
-       std::vector <std::string> args = Util::Split(v, " \t");
+       std::vector<std::string> args = Util::Split(v, " \t");
        if (args.size() != 2) {
         return Status(Status::NotOK, "Invalid rename-command format");
        }
@@ -299,7 +299,7 @@ void Config::initFieldCallback() {
    return srv->storage_->SetColumnFamilyOption(trimRocksDBPrefix(k), v);
  };
 
- std::map <std::string, callback_fn> callbacks = {
+ std::map<std::string, callback_fn> callbacks = {
      {"dir",                                          [this](Server *srv, const std::string &k,
                                                              const std::string &v) -> Status {
        db_dir = dir + "/db";
@@ -318,7 +318,7 @@ void Config::initFieldCallback() {
      {"bind",                                         [this](Server *srv, const std::string &k,
                                                              const std::string &v) -> Status {
        trimRocksDBPrefix(k);
-       std::vector <std::string> args = Util::Split(v, " \t");
+       std::vector<std::string> args = Util::Split(v, " \t");
        binds = std::move(args);
        return Status::OK();
      }},
@@ -333,7 +333,7 @@ void Config::initFieldCallback() {
        if (v.empty()) {
         return Status::OK();
        }
-       std::vector <std::string> args = Util::Split(v, " \t");
+       std::vector<std::string> args = Util::Split(v, " \t");
        if (args.size() != 2) return Status(Status::NotOK, "wrong number of arguments");
        if (args[0] != "no" && args[1] != "one") {
         master_host = args[0];
@@ -346,7 +346,7 @@ void Config::initFieldCallback() {
      }},
      {"profiling-sample-commands",                    [this](Server *srv, const std::string &k,
                                                              const std::string &v) -> Status {
-       std::vector <std::string> cmds = Util::Split(v, ",");
+       std::vector<std::string> cmds = Util::Split(v, ",");
        profiling_sample_all_commands = false;
        profiling_sample_commands.clear();
        for (auto const &cmd: cmds) {
@@ -573,7 +573,7 @@ void Config::ClearMaster() {
 }
 
 Status Config::parseConfigFromString(std::string input, int line_number) {
- std::vector <std::string> kv = Util::Split2KV(input, " \t");
+ std::vector<std::string> kv = Util::Split2KV(input, " \t");
 
  // skip the comment and empty line
  if (kv.empty() || kv[0].front() == '#') return Status::OK();
@@ -607,16 +607,22 @@ Status Config::finish() {
   return Status(Status::NotOK, "enabled cluster mode wasn't allowed while the namespace exists");
  }
  if (db_dir.empty()) db_dir = dir + "/db";
+ rocksdb::ConfigOptions configOptions;
  hdfs_uri = fields_.find("rocksdb.env-uri")->second->ToString();
  if (!hdfs_uri.empty()) {
-  std::cout << "RocksDB will be stored on HDFS" << hdfs_uri << std::endl;
-  auto s = rocksdb::Env::CreateFromUri(rocksdb::ConfigOptions(),
+  std::cout << "RocksDB will be stored on HDFS: " << hdfs_uri << std::endl;
+  std::cout << "target dir: " << db_dir << std::endl;
+  auto s = rocksdb::Env::CreateFromUri(configOptions,
                                        hdfs_uri, "", &env_, &env_guard);
+  if (!s.ok()) {
+   fprintf(stderr, "Failed creating env: %s\n", s.ToString().c_str());
+   exit(1);
+  }
  }
  if (backup_dir.empty()) backup_dir = dir + "/backup";
  if (log_dir.empty()) log_dir = dir;
  if (pidfile.empty()) pidfile = dir + "/kvrocks.pid";
- std::vector <std::string> createDirs = {dir};
+ std::vector<std::string> createDirs = {dir};
  for (const auto &name: createDirs) {
   auto s = env_->CreateDirIfMissing(name);
 //  auto s = rocksdb::Env::Default()->CreateDirIfMissing(name);
@@ -671,7 +677,7 @@ Status Config::Load(const std::string &path) {
  return finish();
 }
 
-void Config::Get(std::string key, std::vector <std::string> *values) {
+void Config::Get(std::string key, std::vector<std::string> *values) {
  values->clear();
  for (const auto &iter: fields_) {
   if (key == "*" || Util::ToLower(key) == iter.first) {
@@ -704,8 +710,8 @@ Status Config::Rewrite() {
  if (path_.empty()) {
   return Status(Status::NotOK, "the server is running without a config file");
  }
- std::vector <std::string> lines;
- std::map <std::string, std::string> new_config;
+ std::vector<std::string> lines;
+ std::map<std::string, std::string> new_config;
  for (const auto &iter: fields_) {
   if (iter.first == "rename-command") {
    // We should NOT overwrite the rename command since it cannot be rewritten in-flight,
@@ -723,7 +729,7 @@ Status Config::Rewrite() {
  std::ifstream file(path_);
  if (file.is_open()) {
   std::string raw_line, trim_line, new_value;
-  std::vector <std::string> kv;
+  std::vector<std::string> kv;
   while (!file.eof()) {
    std::getline(file, raw_line);
    trim_line = Util::Trim(raw_line, " \t\r\n");

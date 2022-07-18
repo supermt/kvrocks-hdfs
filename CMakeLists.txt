@@ -20,7 +20,7 @@ project(kvrocks
         DESCRIPTION "NoSQL which based on rocksdb and compatible with the Redis protocol"
         LANGUAGES CXX)
 
-option(DISABLE_JEMALLOC "disable use of the jemalloc library" OFF)
+option(DISABLE_JEMALLOC "disable use of the jemalloc library" ON)
 option(ENABLE_ASAN "enable address santinizer" OFF)
 option(ENABLE_TSAN "enable thread santinizer" OFF)
 option(ASAN_WITH_LSAN "enable leak santinizer while address santinizer is enabled" ON)
