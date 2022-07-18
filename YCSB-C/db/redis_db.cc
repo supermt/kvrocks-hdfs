@@ -16,7 +16,7 @@ namespace ycsbc {
                     const vector <string> *fields,
                     vector <KVPair> &result) {
    if (fields) {
-    string_vector results;
+    std::vector<std::string> results;
     shared_c->hmget(key, *fields, results);
     if (results.empty()) return DB::kOK;
 

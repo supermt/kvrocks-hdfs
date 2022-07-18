@@ -624,6 +624,7 @@ Status Config::finish() {
  if (pidfile.empty()) pidfile = dir + "/kvrocks.pid";
  std::vector<std::string> createDirs = {dir};
  for (const auto &name: createDirs) {
+  std::cout << "creating dirs:" << name << std::endl;
   auto s = env_->CreateDirIfMissing(name);
 //  auto s = rocksdb::Env::Default()->CreateDirIfMissing(name);
   if (!s.ok()) return Status(Status::NotOK, s.ToString());
