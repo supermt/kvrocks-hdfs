@@ -63,6 +63,23 @@ include(cmake/lua.cmake)
 
 find_package(Threads REQUIRED)
 
+
+set(hdfs_LIBS "hdfs" "dl" "jvm" "verify" "jvm")
+set(hdfs_INCLUDE_PATHS "$ENV{JAVA_HOME}/include" "$ENV{JAVA_HOME}/include/linux" "$ENV{HADOOP_HOME}/include")
+set(hdfs_LINK_PATHS "$ENV{JAVA_HOME}/jre/lib/amd64/server" "$ENV{JAVA_HOME}/jre/lib/amd64" "$ENV{HADOOP_HOME}/lib/native")
+
+add_definitions(-DUSE_HDFS=1)
+message("hdfs dir: ${hdfs_INCLUDE_PATHS}")
+message("hdfs link path: ${hdfs_LINK_PATHS}")
+message("hdfs lib path: ${hdfs_LIBS}")
+
+
+include_directories(${hdfs_INCLUDE_PATHS})
+list(APPEND EXTERNAL_LIBS PRIVATE hdfs)
+link_directories(AFTER ${hdfs_LINK_PATHS})
+
+add_definitions(-DUSE_HDFS=1)
+
 list(APPEND EXTERNAL_LIBS PRIVATE glog)
 list(APPEND EXTERNAL_LIBS PRIVATE snappy)
 list(APPEND EXTERNAL_LIBS PRIVATE rocksdb_with_headers)

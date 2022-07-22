@@ -30,6 +30,7 @@
 #include <glog/logging.h>
 #include <rocksdb/env.h>
 #include <rocksdb/convenience.h>
+#include <rocksdb/env_hdfs.h>
 
 #include "config.h"
 #include "util.h"
@@ -37,6 +38,7 @@
 #include "cron.h"
 #include "server.h"
 #include "log_collector.h"
+//#include "_deps/rocksdb-src/hdfs/env_hdfs.h"
 
 const char *kDefaultNamespace = "__namespace";
 
@@ -607,17 +609,24 @@ Status Config::finish() {
   return Status(Status::NotOK, "enabled cluster mode wasn't allowed while the namespace exists");
  }
  if (db_dir.empty()) db_dir = dir + "/db";
- rocksdb::ConfigOptions configOptions;
  hdfs_uri = fields_.find("rocksdb.env-uri")->second->ToString();
  if (!hdfs_uri.empty()) {
   std::cout << "RocksDB will be stored on HDFS: " << hdfs_uri << std::endl;
   std::cout << "target dir: " << db_dir << std::endl;
-  auto s = rocksdb::Env::CreateFromUri(configOptions,
-                                       hdfs_uri, "", &env_, &env_guard);
-  if (!s.ok()) {
-   fprintf(stderr, "Failed creating env: %s\n", s.ToString().c_str());
+//  auto s = rocksdb::Env::LoadEnv(hdfs_uri, &env_, &env_guard);
+  env_ = new rocksdb::HdfsEnv(hdfs_uri);
+  if (env_ == nullptr) {
+   fprintf(stderr, "Failed creating env, returned an empty env\n");
    exit(1);
   }
+  env_guard.reset(env_);
+//  if (!s.ok()) {
+//   fprintf(stderr, "Failed creating env: %s\n", s.ToString().c_str());
+//   exit(1);
+//  }
+ } else {
+  env_ = rocksdb::Env::Default();
+  env_guard.reset(env_);
  }
  if (backup_dir.empty()) backup_dir = dir + "/backup";
  if (log_dir.empty()) log_dir = dir;
@@ -626,7 +635,6 @@ Status Config::finish() {
  for (const auto &name: createDirs) {
   std::cout << "creating dirs:" << name << std::endl;
   auto s = env_->CreateDirIfMissing(name);
-//  auto s = rocksdb::Env::Default()->CreateDirIfMissing(name);
   if (!s.ok()) return Status(Status::NotOK, s.ToString());
  }
  return Status::OK();
