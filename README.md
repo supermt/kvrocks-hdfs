@@ -4,6 +4,37 @@
 
 * g++ (required by c++11, version >= 4.8)
 * autoconf automake libtool cmake
+* JAVA 1.8, and save at least 8GB for your JAVA HEAP, you can set up the `$_JAVA_OPTIONS`
+
+# example environment:
+
+* This is the example setups, which works fine on my own computer, if you keep receiving the error of JNI and report
+  stack overflow problem, increase the `Xmx` in the following config
+
+```shell
+export HADOOP_HOME=/home/hadoop/hadoop-3.3.3
+export HADOOP_INSTALL=$HADOOP_HOME
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
+
+export _JAVA_OPTIONS="-Xss1g -Xmx12g -XX:StackShadowPages=50"
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native -Xss4m -Xmx512m -XX:StackShadowPages=40"
+export JAVA_HOME=/usr/lib/jvm/default-java/
+#export LD_LIBRARY_PATH=$JAVA_HOME/lib/server
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/jvm/default-java/lib/server:/usr/lib/jvm/default-java/lib/amd64/:/usr/lib/jvm/default-java/lib/
+export LIBRARY_PATH=$LD_LIBRARY_PATH:$LIBRARY_PATH
+
+export CLASSPATH=`hadoop classpath`
+export USE_HDFS=1
+export CLASSPATH=`$HADOOP_HOME/bin/hadoop classpath --glob`
+for f in `find $HADOOP_HOME/share/hadoop/hdfs | grep jar`; do export CLASSPATH=$CLASSPATH:$f; done
+for f in `find $HADOOP_HOME/share/hadoop | grep jar`; do export CLASSPATH=$CLASSPATH:$f; done
+for f in `find $HADOOP_HOME/share/hadoop/client | grep jar`; do export CLASSPATH=$CLASSPATH:$f; done
+```
 
 #### Build
 

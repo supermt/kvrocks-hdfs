@@ -1,6 +1,6 @@
 {
         rocksdb thread local singletons
-        Memcheck:Leak
+        Memcheck:
         ...
         fun:_ZN7rocksdb3Env7DefaultEv
         fun:_ZN6Config4LoadESs
@@ -9,7 +9,7 @@
 
 {
         rocksdb column thread local leaks
-        Memcheck:Leak
+        Memcheck:
         ...
         fun:_ZN7rocksdb14ThreadLocalPtr10StaticMeta10SetHandlerEjPFvPvE
         fun:_ZN7rocksdb16ColumnFamilyDataC1EjRKSsPNS_7VersionEPNS_5CacheEPNS_18WriteBufferManagerERKNS_1

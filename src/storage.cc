@@ -234,9 +234,9 @@ namespace Engine {
    bool cache_index_and_filter_blocks = config_->RocksDB.cache_index_and_filter_blocks;
    size_t metadata_block_cache_size = config_->RocksDB.metadata_block_cache_size * MiB;
    size_t subkey_block_cache_size = config_->RocksDB.subkey_block_cache_size * MiB;
-   config_->env_guard;
+
    rocksdb::Options options;
-   options.env = config_->env_guard.get();
+   options.env = config_->rocks_env_guard_.get();
    InitOptions(&options);
    CreateColumnFamilies(options);
 

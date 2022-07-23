@@ -608,33 +608,40 @@ Status Config::finish() {
  if ((cluster_enabled) && !tokens.empty()) {
   return Status(Status::NotOK, "enabled cluster mode wasn't allowed while the namespace exists");
  }
+
+ redis_env_guard_.reset(rocksdb::Env::Default());
  if (db_dir.empty()) db_dir = dir + "/db";
  hdfs_uri = fields_.find("rocksdb.env-uri")->second->ToString();
  if (!hdfs_uri.empty()) {
   std::cout << "RocksDB will be stored on HDFS: " << hdfs_uri << std::endl;
   std::cout << "target dir: " << db_dir << std::endl;
 //  auto s = rocksdb::Env::LoadEnv(hdfs_uri, &env_, &env_guard);
-  env_ = new rocksdb::HdfsEnv(hdfs_uri);
-  if (env_ == nullptr) {
+  rocks_env_guard_.reset(new rocksdb::HdfsEnv(hdfs_uri));
+  if (rocks_env_guard_ == nullptr) {
    fprintf(stderr, "Failed creating env, returned an empty env\n");
    exit(1);
   }
-  env_guard.reset(env_);
-//  if (!s.ok()) {
-//   fprintf(stderr, "Failed creating env: %s\n", s.ToString().c_str());
-//   exit(1);
-//  }
  } else {
-  env_ = rocksdb::Env::Default();
-  env_guard.reset(env_);
+  rocks_env_guard_.reset(rocksdb::Env::Default());
  }
  if (backup_dir.empty()) backup_dir = dir + "/backup";
  if (log_dir.empty()) log_dir = dir;
  if (pidfile.empty()) pidfile = dir + "/kvrocks.pid";
  std::vector<std::string> createDirs = {dir};
+ std::vector<std::string> rocksdb_dirs = {db_dir};
+
  for (const auto &name: createDirs) {
-  std::cout << "creating dirs:" << name << std::endl;
-  auto s = env_->CreateDirIfMissing(name);
+  std::cout << "creating dirs for kvredis:" << name << std::endl;
+  auto s = redis_env_guard_->CreateDirIfMissing(name);
+  if (!s.ok()) return Status(Status::NotOK, s.ToString());
+ }
+
+ for (const auto &name: rocksdb_dirs) {
+  std::cout << "creating dirs for db:" << name << std::endl;
+  if (hdfs_uri != "") {
+   std::cout << "creating dirs on hdfs" << std::endl;
+  }
+  auto s = rocks_env_guard_->CreateDirIfMissing(name);
   if (!s.ok()) return Status(Status::NotOK, s.ToString());
  }
  return Status::OK();

@@ -18,7 +18,7 @@
 # under the License.
 
 # Settings
-BIN_PATH="../../build/"
+BIN_PATH="../../cmake-build-debug/"
 HOST=127.0.0.1
 PORT=30000
 NODES=6
@@ -61,7 +61,7 @@ if [ "$1" == "start" ]; then
     cp ./default.conf ${conf_file}
     sed -i.bak "s|pidfile.*|pidfile  node_${PORT}.pid|g" ${conf_file} && rm ${conf_file}.bak
     sed -i.bak "s|port.*|port ${PORT}|g" ${conf_file} && rm ${conf_file}.bak
-    sed -i.bak "s|dir.*|dir "/node_${PORT}"|g" ${conf_file} && rm ${conf_file}.bak
+    sed -i.bak "s|dir.*|dir "node_${PORT}"|g" ${conf_file} && rm ${conf_file}.bak
     $BIN_PATH/kvrocks -c ${conf_file}
     sleep 1
     redis-cli -h 127.0.0.1 -p $PORT clusterx setnodeid ${node_id[$index]}
