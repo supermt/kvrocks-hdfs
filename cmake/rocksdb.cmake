@@ -26,7 +26,7 @@ endif ()
 include(cmake/utils.cmake)
 
 FetchContent_DeclareGitHubWithMirrorR(rocksdb
-#        supermt/asu-test-rocksdb.git
+        #        supermt/asu-test-rocksdb.git
         supermt/RocksDB-for-HDFS.git
         main
         )

@@ -19,7 +19,7 @@
 
 # Settings
 BIN_PATH="../../cmake-build-debug/"
-HOST=127.0.0.1
+HOST=0.0.0.0
 PORT=30000
 NODES=6
 REPLICAS=1
@@ -62,12 +62,15 @@ if [ "$1" == "start" ]; then
     sed -i.bak "s|pidfile.*|pidfile  node_${PORT}.pid|g" ${conf_file} && rm ${conf_file}.bak
     sed -i.bak "s|port.*|port ${PORT}|g" ${conf_file} && rm ${conf_file}.bak
     sed -i.bak "s|dir.*|dir "node_${PORT}"|g" ${conf_file} && rm ${conf_file}.bak
-    $BIN_PATH/kvrocks -c ${conf_file}
-    sleep 1
-    redis-cli -h 127.0.0.1 -p $PORT clusterx setnodeid ${node_id[$index]}
+    nohup $BIN_PATH/kvrocks -c ${conf_file} &>nohup$index.out &
+    sleep 5
     redis-cli -h 127.0.0.1 -p $PORT clusterx setnodes "${cluster_nodes}" 1
+    redis-cli -h 127.0.0.1 -p $PORT clusterx setnodeid ${node_id[$index]}
     index=$((index + 1))
   done
+
+  index=0
+
   exit 0
 fi
 
@@ -78,6 +81,7 @@ if [ "$1" == "stop" ]; then
     redis-cli -h 127.0.0.1 -p $PORT shutdown
   done
   rm -r ./node_*
+  rm ./nohup*
   exit 0
 fi
 

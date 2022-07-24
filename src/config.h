@@ -65,7 +65,7 @@ struct Config {
 public:
   Config();
 
-  ~Config() = default;
+  ~Config();
 
   int port = 6666;
   int workers = 0;
@@ -165,6 +165,7 @@ public:
     int max_bytes_for_level_base;
     int max_bytes_for_level_multiplier;
     bool level_compaction_dynamic_level_bytes;
+    std::string hdfs_uri;
   } RocksDB;
 
 public:

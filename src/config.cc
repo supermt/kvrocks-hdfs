@@ -148,7 +148,7 @@ Config::Config() {
      {"unixsocketperm",                         true,  new OctalField(&unixsocketperm, 0777, 1, INT_MAX)},
 
      /* rocksdb options */
-     {"rocksdb.env-uri",                        false, new StringField(&requirepass, "")},
+     {"rocksdb.env-uri",                        false, new StringField(&RocksDB.hdfs_uri, "")},
      {"rocksdb.compression",                    false, new EnumField(&RocksDB.compression, compression_type_enum, 0)},
      {"rocksdb.block_size",                     true,  new IntField(&RocksDB.block_size, 4096, 0, INT_MAX)},
      {"rocksdb.max_open_files",                 false, new IntField(&RocksDB.max_open_files, 4096, -1, INT_MAX)},
@@ -611,7 +611,7 @@ Status Config::finish() {
 
  redis_env_guard_.reset(rocksdb::Env::Default());
  if (db_dir.empty()) db_dir = dir + "/db";
- hdfs_uri = fields_.find("rocksdb.env-uri")->second->ToString();
+ hdfs_uri = RocksDB.hdfs_uri;
  if (!hdfs_uri.empty()) {
   std::cout << "RocksDB will be stored on HDFS: " << hdfs_uri << std::endl;
   std::cout << "target dir: " << db_dir << std::endl;
@@ -888,4 +888,9 @@ Status Config::isNamespaceLegal(const std::string &ns) {
   return Status(Status::NotOK, std::string("namespace contain illegal letter"));
  }
  return Status::OK();
+}
+
+Config::~Config() {
+ redis_env_guard_.reset();
+ rocks_env_guard_.reset();
 }

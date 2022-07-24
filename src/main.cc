@@ -303,9 +303,9 @@ static void daemonize() {
   LOG(ERROR) << "Failed to setsid, err: %s" << strerror(errno);
   exit(1);
  }
- close(STDIN_FILENO);
- close(STDOUT_FILENO);
- close(STDERR_FILENO);
+// close(STDIN_FILENO);
+// close(STDOUT_FILENO);
+// close(STDERR_FILENO);
 }
 
 int main(int argc, char *argv[]) {
@@ -340,7 +340,6 @@ int main(int argc, char *argv[]) {
   exit(1);
  }
  bool is_supervised = isSupervisedMode(config.supervised_mode);
- if (config.daemonize && !is_supervised) daemonize();
  s = createPidFile(config.pidfile);
  if (!s.IsOK()) {
   LOG(ERROR) << "Failed to create pidfile: " << s.Msg();
@@ -355,6 +354,7 @@ int main(int argc, char *argv[]) {
   removePidFile(config.pidfile);
   exit(1);
  }
+ if (config.daemonize && !is_supervised) daemonize();
  srv = new Server(&storage, &config);
  hup_handler = [] {
    if (!srv->IsStopped()) {

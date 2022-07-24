@@ -45,6 +45,7 @@
 #include "compact_filter.h"
 #include "table_properties_collector.h"
 #include "event_util.h"
+#include "rocksdb/env_hdfs.h"
 
 namespace Engine {
 
@@ -65,9 +66,9 @@ namespace Engine {
   using rocksdb::Slice;
 
   Storage::Storage(Config *config)
-      : env_(rocksdb::Env::Default()),
-        config_(config),
+      : config_(config),
         lock_mgr_(16) {
+   env_ = new rocksdb::HdfsEnv("hdfs://localhost:9000/");
    Metadata::InitVersionCounter();
    SetCheckpointCreateTime(0);
    SetCheckpointAccessTime(0);
@@ -170,6 +171,8 @@ namespace Engine {
    options->max_bytes_for_level_base = config_->RocksDB.max_bytes_for_level_base;
    options->max_bytes_for_level_multiplier = config_->RocksDB.max_bytes_for_level_multiplier;
    options->level_compaction_dynamic_level_bytes = config_->RocksDB.level_compaction_dynamic_level_bytes;
+   options->env = config_->rocks_env_guard_.get();
+   env_ = config_->rocks_env_guard_.get();
   }
 
   Status Storage::SetColumnFamilyOption(const std::string &key, const std::string &value) {
@@ -312,7 +315,11 @@ namespace Engine {
    if (read_only) {
     s = rocksdb::DB::OpenForReadOnly(options, config_->db_dir, column_families, &cf_handles_, &db_);
    } else {
+    std::cout << "open db" << std::endl;
     s = rocksdb::DB::Open(options, config_->db_dir, column_families, &cf_handles_, &db_);
+    if (!s.ok()) {
+     std::cout << "db open failed, exit" << std::endl;
+    }
    }
    auto end = std::chrono::high_resolution_clock::now();
    int64_t duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
