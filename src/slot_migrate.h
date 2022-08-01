@@ -77,7 +77,7 @@ struct SlotMigrateJob {
 };
 
 
-class SlotMigrate : public Redis::Database {
+class  SlotMigrate : public Redis::Database {
  public:
   explicit SlotMigrate(Server *svr, int speed = kMigrateSpeed,
                        int pipeline_size = kPipelineSize, int seq_gap = kSeqGapLimit);

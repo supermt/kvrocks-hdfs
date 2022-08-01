@@ -36,6 +36,15 @@ for f in `find $HADOOP_HOME/share/hadoop | grep jar`; do export CLASSPATH=$CLASS
 for f in `find $HADOOP_HOME/share/hadoop/client | grep jar`; do export CLASSPATH=$CLASSPATH:$f; done
 ```
 
+# For Clion users
+
+if your debugger keeps reporting Segment fault, you can create the `.gdbinit` file, and add the following lines into the
+system, but be careful, as it will pass all the segment fault in your system. Also, this works ONLY for gdb.
+
+```
+handle SIGSEGV nostop noprint pass
+```
+
 #### Build
 
 ```shell
@@ -72,6 +81,8 @@ cd tools/try_cluster/
 ./try_cluster.sh stop
 exit 
 ```
+
+# Commands to do the migration.
 
 ```shell
 redis-cli -h 127.0.0.1 -p 30001 clusterx migrate 0 kvrockskvrockskvrockskvrockskvrocksnode3
