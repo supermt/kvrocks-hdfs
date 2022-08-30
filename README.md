@@ -85,13 +85,13 @@ exit
 # Commands to do the migration.
 
 ```shell
-redis-cli -h 127.0.0.1 -p 30001 clusterx migrate 0 kvrockskvrockskvrockskvrockskvrocksnode3
-redis-cli -h 127.0.0.1 -p 30001 clusterx setslot 0 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2  
-redis-cli -h 127.0.0.1 -p 30002 clusterx setslot 0 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2
-redis-cli -h 127.0.0.1 -p 30003 clusterx setslot 0 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2
-redis-cli -h 127.0.0.1 -p 30004 clusterx setslot 0 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2
-redis-cli -h 127.0.0.1 -p 30005 clusterx setslot 0 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2
-redis-cli -h 127.0.0.1 -p 30006 clusterx setslot 0 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2
+redis-cli -h 127.0.0.1 -p 30001 clusterx migrate 0-5460 kvrockskvrockskvrockskvrockskvrocksnode3
+redis-cli -h 127.0.0.1 -p 30001 clusterx setslot 0-5460 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2  
+redis-cli -h 127.0.0.1 -p 30002 clusterx setslot 0-5460 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2
+redis-cli -h 127.0.0.1 -p 30003 clusterx setslot 0-5460 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2
+redis-cli -h 127.0.0.1 -p 30004 clusterx setslot 0-5460 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2
+redis-cli -h 127.0.0.1 -p 30005 clusterx setslot 0-5460 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2
+redis-cli -h 127.0.0.1 -p 30006 clusterx setslot 0-5460 NODE kvrockskvrockskvrockskvrockskvrocksnode3 2
 ```
 
 ## Use YCSB to do the benchmark
