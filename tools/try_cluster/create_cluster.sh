@@ -28,7 +28,7 @@ EMPTY_NODES=3
 ENDPORT=$((PORT + START_NODES))
 TOTALPORT=$((ENDPORT + EMPTY_NODES))
 
-slots_range=("0-5460" "5461-16383")
+slots_range=("0-8191" "8192-16383")
 node_id=("kvrockskvrockskvrockskvrockskvrocksnode1"
   "kvrockskvrockskvrockskvrockskvrocksnode2")
 
@@ -63,12 +63,14 @@ if [ "$1" == "create" ]; then
     index=$((index + 1))
   done
   cluster_nodes=$(echo -e ${cluster_nodes:2})
+  echo ${cluster_nodes}
 
   index=0
   while [ $((PORT < ENDPORT)) != "0" ]; do
     PORT=$((PORT+1))
     redis-cli -h 127.0.0.1 -p $PORT clusterx setnodes "${cluster_nodes}" 1
     redis-cli -h 127.0.0.1 -p $PORT clusterx setnodeid ${node_id[$index]}
+    echo "server ${node_id[$index]} configured"
     index=$((index + 1))
   done 
   exit 0
